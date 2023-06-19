@@ -6,11 +6,11 @@
     "symbol": "🎓",
     "examples": ["explain the Pythagorean theorem", "solve this algebraic equation", "what is the capital of France?"]
   },
-  "Default": {
+  "Generic": {
     "title": "Default",
     "description": "No specific Guidelines, ChatGPT as it is!",
     "systemMessage": "",
-    "symbol": "❓",
+    "symbol": "🧠 ",
     "examples": ["classic chagpt with no special purpose"]
   }
 }

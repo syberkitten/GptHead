@@ -3,181 +3,371 @@ import { shallow } from 'zustand/shallow';
 import { persist } from 'zustand/middleware';
 
 import { DLLM, DLLMId, DModelSource, DModelSourceId } from './llm.types';
+import {SourceSetupOpenAI} from "~/modules/llms/openai/openai.vendor";
 
 
 /// ModelsStore - a store for LLMs and their origins
 interface ModelsStore {
 
-  chatLLMId: DLLMId | null;
-  fastLLMId: DLLMId | null;
-  llms: DLLM[];
-  sources: DModelSource[];
+    chatLLMId: DLLMId | null;
+    fastLLMId: DLLMId | null;
+    llms: DLLM[];
+    sources: DModelSource[];
 
-  setChatLLMId: (id: DLLMId | null) => void;
+    setChatLLMId: (id: DLLMId | null) => void;
 
-  addLLMs: (llms: DLLM[]) => void;
-  removeLLM: (id: DLLMId) => void;
-  updateLLM: (id: DLLMId, partial: Partial<DLLM>) => void;
-  updateLLMOptions: <T>(id: DLLMId, partialOptions: Partial<T>) => void;
+    addLLMs: (llms: DLLM[]) => void;
+    removeLLM: (id: DLLMId) => void;
+    updateLLM: (id: DLLMId, partial: Partial<DLLM>) => void;
+    updateLLMOptions: <T>(id: DLLMId, partialOptions: Partial<T>) => void;
 
-  addSource: (source: DModelSource) => void;
-  removeSource: (id: DModelSourceId) => void;
-  updateSourceSetup: <T>(id: DModelSourceId, partialSetup: Partial<T>) => void;
+    addSource: (source: DModelSource) => void;
+    removeSource: (id: DModelSourceId) => void;
+    updateSourceSetup: <T>(id: DModelSourceId, partialSetup: Partial<T>) => void;
 
 }
 
 
-export const useModelsStore = create<ModelsStore>()(
-  persist(
-    (set) => ({
-
-      chatLLMId: null,
-      fastLLMId: null,
-      llms: [],
-      sources: [],
-
-      setChatLLMId: (id: DLLMId | null) =>
-        set({ chatLLMId: id }),
-
-      // NOTE: make sure to the _source links (sId foreign) are already set before calling this
-      // this will replace existing llms with the same id
-      addLLMs: (llms: DLLM[]) =>
-        set(state => {
-          const newLlms = [...llms, ...state.llms.filter(llm => !llms.find(m => m.id === llm.id))];
-          return {
-            llms: newLlms,
-            ...updateSelectedIds(newLlms, state.chatLLMId, state.fastLLMId),
-          };
-        }),
-
-      removeLLM: (id: DLLMId) =>
-        set(state => {
-          const newLlms = state.llms.filter(llm => llm.id !== id);
-          return {
-            llms: newLlms,
-            ...updateSelectedIds(newLlms, state.chatLLMId, state.fastLLMId),
-          };
-        }),
-
-      updateLLM: (id: DLLMId, partial: Partial<DLLM>) =>
-        set(state => ({
-          llms: state.llms.map((llm: DLLM): DLLM =>
-            llm.id === id
-              ? { ...llm, ...partial }
-              : llm,
-          ),
-        })),
-
-      updateLLMOptions: <T>(id: DLLMId, partialOptions: Partial<T>) =>
-        set(state => ({
-          llms: state.llms.map((llm: DLLM): DLLM =>
-            llm.id === id
-              ? { ...llm, options: { ...llm.options, ...partialOptions } }
-              : llm,
-          ),
-        })),
-
-
-      addSource: (source: DModelSource) =>
-        set(state => ({
-          sources: [...state.sources, source],
-        })),
-
-      removeSource: (id: DModelSourceId) =>
-        set(state => {
-          const llms = state.llms.filter(llm => llm.sId !== id);
-          return {
-            llms,
-            sources: state.sources.filter(source => source.id !== id),
-            ...updateSelectedIds(llms, state.chatLLMId, state.fastLLMId),
-          };
-        }),
-
-      updateSourceSetup: <T>(id: DModelSourceId, partialSetup: Partial<T>) =>
-        set(state => ({
-          sources: state.sources.map((source: DModelSource): DModelSource =>
-            source.id === id
-              ? {
-                ...source,
-                setup: { ...source.setup, ...partialSetup },
-              } : source,
-          ),
-        })),
-
-    }),
+const default_llms: DLLM[] = [
     {
-      name: 'app-models',
+        "id": "openai-gpt-3.5-turbo-16k",
+        "label": "3.5-Turbo-16k",
+        "created": 1683758102,
+        "description": "Fair speed and smarts, large context",
+        "tags": [],
+        "contextTokens": 16384,
+        "hidden": false,
+        "sId": "openai",
+        "options": {
+            "llmRef": "gpt-3.5-turbo-16k",
+            "llmTemperature": 0.5,
+            "llmResponseTokens": 2048
+        },
+        "_source": {
+            "label": "openai",
+            "id": 'openai',
+            "vId": "openai",
+            "setup": {
+                "heliKey": "",
 
-      // omit the memory references from the persisted state
-      partialize: (state) => ({
-        ...state,
-        llms: state.llms.map(llm => {
-          const { _source, ...rest } = llm;
-          return rest;
+            }
+        }
+    },
+    {
+    "id": "openai-gpt-4",
+    "label": "GPT-4",
+    "created": 1678604602,
+    "description": "Insightful, big thinker, slower, pricey",
+    "tags": [],
+    "contextTokens": 8192,
+    "hidden": false,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-4",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 1024
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-4-0314",
+    "label": "GPT-4 (0314)",
+    "created": 1678604601,
+    "description": "Insightful, big thinker, slower, pricey",
+    "tags": [],
+    "contextTokens": 8192,
+    "hidden": true,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-4-0314",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 1024
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-4-0613",
+    "label": "GPT-4 (0613)",
+    "created": 1686588896,
+    "description": "Insightful, big thinker, slower, pricey",
+    "tags": [],
+    "contextTokens": 8192,
+    "hidden": false,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-4-0613",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 1024
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-3.5-turbo",
+    "label": "3.5-Turbo",
+    "created": 1677610602,
+    "description": "Fair speed and smarts",
+    "tags": [],
+    "contextTokens": 4097,
+    "hidden": false,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-3.5-turbo",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 512
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-3.5-turbo-0301",
+    "label": "3.5-Turbo (0301)",
+    "created": 1677649963,
+    "description": "Fair speed and smarts",
+    "tags": [],
+    "contextTokens": 4097,
+    "hidden": true,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-3.5-turbo-0301",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 512
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-3.5-turbo-0613",
+    "label": "3.5-Turbo (0613)",
+    "created": 1686587434,
+    "description": "Fair speed and smarts",
+    "tags": [],
+    "contextTokens": 4097,
+    "hidden": false,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-3.5-turbo-0613",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 512
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}, {
+    "id": "openai-gpt-3.5-turbo-16k-0613",
+    "label": "3.5-Turbo-16k (0613)",
+    "created": 1685474247,
+    "description": "Fair speed and smarts, large context",
+    "tags": [],
+    "contextTokens": 16384,
+    "hidden": false,
+    "sId": "openai",
+    "options": {
+        "llmRef": "gpt-3.5-turbo-16k-0613",
+        "llmTemperature": 0.5,
+        "llmResponseTokens": 2048
+    },
+    "_source": {
+        "label": "openai",
+        "id": 'openai',
+        "vId": "openai",
+        "setup": {
+            "heliKey": "",
+
+        }
+    }
+}]
+
+export const useModelsStore = create<ModelsStore>()(
+    persist(
+        (set) => ({
+
+            chatLLMId: null,
+            fastLLMId: null,
+            llms: [],
+            sources: [],
+
+            setChatLLMId: (id: DLLMId | null) =>
+                set({ chatLLMId: id }),
+
+            // NOTE: make sure to the _source links (sId foreign) are already set before calling this
+            // this will replace existing llms with the same id
+            addLLMs: (llms: DLLM[]) =>
+                set(state => {
+                    const newLlms = [...llms, ...state.llms.filter(llm => !llms.find(m => m.id === llm.id))];
+                    const defaultLlms = default_llms.filter(llm => !newLlms.find(m => m.id === llm.id));
+                    return {
+                        llms: [...newLlms, ...defaultLlms],
+                        ...updateSelectedIds([...newLlms, ...defaultLlms], state.chatLLMId, state.fastLLMId),
+                    };
+                }),
+
+            removeLLM: (id: DLLMId) =>
+                set(state => {
+                    const newLlms = state.llms.filter(llm => llm.id !== id);
+                    return {
+                        llms: newLlms,
+                        ...updateSelectedIds(newLlms, state.chatLLMId, state.fastLLMId),
+                    };
+                }),
+
+            updateLLM: (id: DLLMId, partial: Partial<DLLM>) =>
+                set(state => ({
+                    llms: state.llms.map((llm: DLLM): DLLM =>
+                        llm.id === id
+                            ? { ...llm, ...partial }
+                            : llm,
+                    ),
+                })),
+
+            updateLLMOptions: <T>(id: DLLMId, partialOptions: Partial<T>) =>
+                set(state => ({
+                    llms: state.llms.map((llm: DLLM): DLLM =>
+                        llm.id === id
+                            ? { ...llm, options: { ...llm.options, ...partialOptions } }
+                            : llm,
+                    ),
+                })),
+
+
+            addSource: (source: DModelSource) =>
+                set(state => ({
+                    sources: [...state.sources, source],
+                })),
+
+            removeSource: (id: DModelSourceId) =>
+                set(state => {
+                    const llms = state.llms.filter(llm => llm.sId !== id);
+                    return {
+                        llms,
+                        sources: state.sources.filter(source => source.id !== id),
+                        ...updateSelectedIds(llms, state.chatLLMId, state.fastLLMId),
+                    };
+                }),
+
+            updateSourceSetup: <T>(id: DModelSourceId, partialSetup: Partial<T>) =>
+                set(state => ({
+                    sources: state.sources.map((source: DModelSource): DModelSource =>
+                        source.id === id
+                            ? {
+                                ...source,
+                                setup: { ...source.setup, ...partialSetup },
+                            } : source,
+                    ),
+                })),
+
         }),
-      }),
+        {
+            name: 'app-models',
 
-      // re-link the memory references on rehydration
-      onRehydrateStorage: () => (state) => {
-        if (!state) return;
+            // omit the memory references from the persisted state
+            partialize: (state) => ({
+                ...state,
+                llms: state.llms.map(llm => {
+                    const { _source, ...rest } = llm;
+                    return rest;
+                }),
+            }),
 
-        state.llms = state.llms.map(llm => {
-          const source = state.sources.find(source => source.id === llm.sId);
-          if (!source) return null;
-          return { ...llm, _source: source };
-        }).filter(llm => !!llm) as DLLM[];
-      },
-    }),
+            // re-link the memory references on rehydration
+            onRehydrateStorage: () => (state) => {
+                if (!state) return;
+
+                state.llms = state.llms.map(llm => {
+                    const source = state.sources.find(source => source.id === llm.sId);
+                    if (!source) return null;
+                    return { ...llm, _source: source };
+                }).filter(llm => !!llm) as DLLM[];
+            },
+        }),
 );
 
 
-const defaultChatSuffixPreference = ['gpt-4-0613', 'gpt-4', 'gpt-4-32k', 'gpt-3.5-turbo'];
-const defaultFastSuffixPreference = ['gpt-3.5-turbo-16k-0613', 'gpt-3.5-turbo-16k', 'gpt-3.5-turbo'];
+const defaultChatSuffixPreference = ['gpt-3.5-turbo-16k-0613', 'gpt-4-0613', 'gpt-4', 'gpt-4-32k', 'gpt-3.5-turbo'];
+const defaultFastSuffixPreference = ['gpt-3.5-turbo-16k', 'gpt-3.5-turbo'];
 
 function findLlmIdBySuffix(llms: DLLM[], suffixes: string[]): DLLMId | null {
-  if (!llms?.length) return null;
-  for (const suffix of suffixes)
-    for (const llm of llms)
-      if (llm.id.endsWith(suffix))
-        return llm.id;
-  // otherwise return first id
-  return llms[0].id;
+    if (!llms?.length) return null;
+    for (const suffix of suffixes)
+        for (const llm of llms)
+            if (llm.id.endsWith(suffix))
+                return llm.id;
+    // otherwise return first id
+    return llms[0].id;
 }
 
 function updateSelectedIds(allLlms: DLLM[], chatLlmId: DLLMId | null, fastLlmId: DLLMId | null): Partial<ModelsStore> {
-  if (chatLlmId && !allLlms.find(llm => llm.id === chatLlmId)) chatLlmId = null;
-  if (!chatLlmId) chatLlmId = findLlmIdBySuffix(allLlms, defaultChatSuffixPreference);
+    if (chatLlmId && !allLlms.find(llm => llm.id === chatLlmId)) chatLlmId = null;
+    if (!chatLlmId) chatLlmId = findLlmIdBySuffix(allLlms, defaultChatSuffixPreference);
 
-  if (fastLlmId && !allLlms.find(llm => llm.id === fastLlmId)) fastLlmId = null;
-  if (!fastLlmId) fastLlmId = findLlmIdBySuffix(allLlms, defaultFastSuffixPreference);
+    if (fastLlmId && !allLlms.find(llm => llm.id === fastLlmId)) fastLlmId = null;
+    if (!fastLlmId) fastLlmId = findLlmIdBySuffix(allLlms, defaultFastSuffixPreference);
 
-  return { chatLLMId: chatLlmId, fastLLMId: fastLlmId };
+    return { chatLLMId: chatLlmId, fastLLMId: fastLlmId };
 }
 
 
 export function findLLMOrThrow(llmId: DLLMId): DLLM {
-  const llm = useModelsStore.getState().llms.find(llm => llm.id === llmId);
-  if (!llm) throw new Error(`LLM ${llmId} not found`);
-  if (!llm._source) throw new Error(`LLM ${llmId} has no source`);
-  return llm;
+    const llm = useModelsStore.getState().llms.find(llm => llm.id === llmId);
+    if (!llm) throw new Error(`LLM ${llmId} not found`);
+    if (!llm._source) throw new Error(`LLM ${llmId} has no source`);
+    return llm;
 }
 
 export function findOpenAILlmRefOrThrow(llmId: DLLMId): string {
-  const { options: { llmRef: openAIModelRef } } = findLLMOrThrow(llmId);
-  if (!openAIModelRef) throw new Error(`LLM ${llmId} has no OpenAI LLM`);
-  return openAIModelRef;
+    const { options: { llmRef: openAIModelRef } } = findLLMOrThrow(llmId);
+    if (!openAIModelRef) throw new Error(`LLM ${llmId} has no OpenAI LLM`);
+    return openAIModelRef;
 }
 
 
 export function useChatLLM() {
-  return useModelsStore(state => {
-    const { chatLLMId } = state;
-    const chatLLM = chatLLMId ? state.llms.find(llm => llm.id === chatLLMId) ?? null : null;
-    return {
-      chatLLMId,
-      chatLLM,
-    };
-  }, shallow);
+    return useModelsStore(state => {
+        const { chatLLMId } = state;
+        const chatLLM = chatLLMId ? state.llms.find(llm => llm.id === chatLLMId) ?? null : null;
+        return {
+            chatLLMId,
+            chatLLM,
+        };
+    }, shallow);
 }
 
 
@@ -185,18 +375,18 @@ export function useChatLLM() {
  * Hook used for Source-specific setup
  */
 export function useSourceSetup<T>(sourceId: DModelSourceId, normalizer: (partialSetup?: Partial<T>) => T) {
-  // invalidate when the setup changes
-  const { updateSourceSetup, ...rest } = useModelsStore(state => {
-    const source = state.sources.find(source => source.id === sourceId) ?? null;
-    return {
-      source,
-      sourceLLMs: source ? state.llms.filter(llm => llm._source === source) : [],
-      normSetup: normalizer(source?.setup as Partial<T> | undefined),
-      updateSourceSetup: state.updateSourceSetup,
-    };
-  }, shallow);
+    // invalidate when the setup changes
+    const { updateSourceSetup, ...rest } = useModelsStore(state => {
+        const source = state.sources.find(source => source.id === sourceId) ?? null;
+        return {
+            source,
+            sourceLLMs: source ? state.llms.filter(llm => llm._source === source) : [],
+            normSetup: normalizer(source?.setup as Partial<T> | undefined),
+            updateSourceSetup: state.updateSourceSetup,
+        };
+    }, shallow);
 
-  // convenience function for this source
-  const updateSetup = (partialSetup: Partial<T>) => updateSourceSetup<T>(sourceId, partialSetup);
-  return { ...rest, updateSetup };
+    // convenience function for this source
+    const updateSetup = (partialSetup: Partial<T>) => updateSourceSetup<T>(sourceId, partialSetup);
+    return { ...rest, updateSetup };
 }
