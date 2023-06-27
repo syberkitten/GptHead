@@ -3,7 +3,6 @@ import { shallow } from 'zustand/shallow';
 import { persist } from 'zustand/middleware';
 
 import { DLLM, DLLMId, DModelSource, DModelSourceId } from './llm.types';
-import {SourceSetupOpenAI} from "~/modules/llms/openai/openai.vendor";
 
 
 /// ModelsStore - a store for LLMs and their origins
@@ -15,6 +14,7 @@ interface ModelsStore {
     sources: DModelSource[];
 
     setChatLLMId: (id: DLLMId | null) => void;
+    setFastLLMId: (id: DLLMId | null) => void;
 
     addLLMs: (llms: DLLM[]) => void;
     removeLLM: (id: DLLMId) => void;
@@ -226,7 +226,10 @@ export const useModelsStore = create<ModelsStore>()(
             sources: [],
 
             setChatLLMId: (id: DLLMId | null) =>
-                set({ chatLLMId: id }),
+                set(state => updateSelectedIds(state.llms, id, state.fastLLMId)),
+
+            setFastLLMId: (id: DLLMId | null) =>
+                set(state => updateSelectedIds(state.llms, state.chatLLMId, id)),
 
             // NOTE: make sure to the _source links (sId foreign) are already set before calling this
             // this will replace existing llms with the same id
