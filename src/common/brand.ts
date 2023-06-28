@@ -21,7 +21,6 @@ export const Brand = {
     ThemeColor: '#434356',
     TwitterSite: '@InfiniCLI',
   },
-
   URIs: {
     Home: 'https://infinicli.com',
     CardImage: 'https://infinicli.com/icons/card-dark-1200.png',
