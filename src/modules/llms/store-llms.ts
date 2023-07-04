@@ -288,7 +288,7 @@ export const useModelsStore = create<ModelsStore>()(
           return {
             llms,
             sources: state.sources.filter(source => source.id !== id),
-            ...updateSelectedIds(llms, state.chatLLMId, state.fastLLMId),
+            ...updateSelectedIds(llms, state.chatLLMId, state.fastLLMId, state.funcLLMId),
           };
         }),
 
