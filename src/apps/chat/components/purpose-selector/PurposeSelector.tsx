@@ -11,6 +11,7 @@ import { useUIPreferencesStore } from '~/common/state/store-ui';
 import { SystemPurposeId, SystemPurposes } from '../../../../data';
 import { usePurposeStore } from './store-purposes';
 
+
 // Constants for tile sizes / grid width - breakpoints need to be computed here to work around
 // the "flex box cannot shrink over wrapped content" issue
 //
@@ -24,7 +25,7 @@ const bpMaxWidth = Object.entries(bpTileSize).reduce((acc, [key, value], index) 
   return acc;
 }, {} as Record<string, number>);
 const bpTileGap = { xs: 2, md: 3 };
-//const isScreenSmall = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
 
 // Add this utility function to get a random array element
 const getRandomElement = <T, >(array: T[]): T | undefined =>
