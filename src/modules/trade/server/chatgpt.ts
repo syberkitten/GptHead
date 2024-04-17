@@ -40,7 +40,6 @@ export const chatGptSharedChatSchema = z.object({
   continue_conversation_url: z.string(),
   model: z.object({
     slug: z.string(),
-    max_tokens: z.number(),
     title: z.string(),
     description: z.string(),
     tags: z.array(z.string()),

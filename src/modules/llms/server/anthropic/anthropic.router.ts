@@ -113,7 +113,6 @@ export function anthropicMessagesPayloadOrThrow(model: OpenAIModelSchema, histor
     model: model.id,
     ...(systemPrompt !== undefined && { system: systemPrompt }),
     messages: messages,
-    max_tokens: model.maxTokens || DEFAULT_MAX_TOKENS,
     stream: stream,
     ...(model.temperature !== undefined && { temperature: model.temperature }),
     // metadata: not useful to us
