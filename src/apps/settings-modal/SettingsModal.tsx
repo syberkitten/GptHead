@@ -5,6 +5,7 @@ import { Accordion, AccordionDetails, accordionDetailsClasses, AccordionGroup, A
 import AddIcon from '@mui/icons-material/Add';
 import ScienceIcon from '@mui/icons-material/Science';
 import SearchIcon from '@mui/icons-material/Search';
+import { UserButton } from '@clerk/nextjs'; // Import the UserButton component
 
 import { BrowseSettings } from '~/modules/browse/BrowseSettings';
 import { DallESettings } from '~/modules/t2i/dalle/DallESettings';
@@ -130,6 +131,8 @@ export function SettingsModal(props: {
       )}
     >
 
+      {/* Render the UserButton component */}
+      <UserButton />
       <Divider />
 
       <Tabs aria-label='Settings tabbed menu' defaultValue={props.tabIndex}>

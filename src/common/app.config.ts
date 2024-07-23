@@ -8,23 +8,23 @@
  */
 export const Brand = {
   Title: {
-    Base: 'big-AGI',
-    Common: (process.env.NODE_ENV === 'development' ? '[DEV] ' : '') + 'big-AGI',
+    Base: 'Infinicli\'s GpTHeaD' ,
+    Common: (process.env.NODE_ENV === 'development' ? '[DEV] ' : '') + 'infinicli.com',
   },
   Meta: {
-    Description: 'Launch big-AGI to unlock the full potential of AI, with precise control over your data and models. Voice interface, AI personas, advanced features, and fun UX.',
-    SiteName: 'big-AGI | Precision AI for You',
+    Description: 'Launch GpT-HeaD to unlock the full potential of AI, with precise control over your data and models. Voice interface, AI personas, advanced features, and fun UX.',
+    SiteName: 'infinicli.com | Precision AI for You',
     ThemeColor: '#32383E',
     TwitterSite: '@enricoros',
   },
   URIs: {
-    Home: 'https://big-agi.com',
-    // App: 'https://get.big-agi.com',
-    CardImage: 'https://big-agi.com/icons/card-dark-1200.png',
-    OpenRepo: 'https://github.com/enricoros/big-agi',
+    Home: 'https://infinicli.com',
+    // App: 'https://get.infinicli.com.com',
+    CardImage: 'https://infinicli.com.com/icons/card-dark-1200.png',
+    OpenRepo: 'https://github.com/enricoros/infinicli.com',
     OpenProject: 'https://github.com/users/enricoros/projects/4',
     SupportInvite: 'https://discord.gg/MkH4qj2Jp9',
     // Twitter: 'https://www.twitter.com/enricoros',
-    PrivacyPolicy: 'https://big-agi.com/privacy',
+    PrivacyPolicy: 'https://infinicli.com.com/privacy',
   },
 } as const;
