@@ -35,7 +35,8 @@ export function BlockPartText_AutoBlocks(props: {
 
   onContextMenu?: (event: React.MouseEvent) => void;
   onDoubleClick?: (event: React.MouseEvent) => void;
-
+  direction?: 'ltr' | 'rtl';
+  isRTL?: boolean;
 }) {
 
   // derived state
@@ -46,6 +47,16 @@ export function BlockPartText_AutoBlocks(props: {
   // handlers
 
   const { fragmentId, setEditedText } = props;
+
+  function isRTLText(text: string): boolean {
+    const rtlRegex = /^[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+    return rtlRegex.test(text.trim());
+  }
+  
+  const computedDirection = props.direction || (isRTLText(props.textPartText) ? 'rtl' : 'ltr');
+  console.log('textPartText:', props.textPartText);
+  console.log('isRTLText(props.textPartText):', isRTLText(props.textPartText));
+  console.log('computedDirection:', computedDirection);
 
   const handleSetText = React.useCallback((newText: string) => {
     setEditedText?.(fragmentId, newText, true);
@@ -80,7 +91,9 @@ export function BlockPartText_AutoBlocks(props: {
       optiAllowSubBlocksMemo={props.optiAllowSubBlocksMemo}
       onContextMenu={props.onContextMenu}
       onDoubleClick={props.onDoubleClick}
+      direction={computedDirection}
       setText={props.setEditedText ? handleSetText : undefined}
+      isRTL={props.isRTL}
     />
   );
 }

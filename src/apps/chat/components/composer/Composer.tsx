@@ -81,6 +81,11 @@ import { useComposerDragDrop } from './useComposerDragDrop';
 import { useWebInputModal } from './WebInputModal';
 
 
+function isRTLText(text: string): boolean {
+  const rtlRegex = /^[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+  return rtlRegex.test(text.trim());
+}
+
 const zIndexComposerOverlayMic = 10;
 
 
@@ -125,6 +130,7 @@ export function Composer(props: {
   } = useChatExecuteMode(props.capabilityHasT2I, props.isMobile);
   const [isMinimized, setIsMinimized] = React.useState(false);
   const micCardRef = React.useRef<HTMLDivElement>(null);
+  const [isRTL, setIsRTL] = React.useState(false);
 
   // external state
   const { showPromisedOverlay } = useOverlayComponents();
@@ -517,6 +523,7 @@ export function Composer(props: {
 
   const handleTextareaTextChange = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComposeText(e.target.value);
+    setIsRTL(isRTLText(e.target.value));
     isMobile && actileInterceptTextChange(e.target.value);
   }, [actileInterceptTextChange, isMobile, setComposeText]);
 
@@ -865,6 +872,7 @@ export function Composer(props: {
                       backgroundColor: 'background.level1',
                       '&:focus-within': { backgroundColor: 'background.popup', '.within-composer-focus': { backgroundColor: 'background.popup' } },
                       lineHeight: lineHeightTextareaMd,
+                      direction: isRTL ? 'rtl' : 'ltr',
                     }} />
 
                   {!showChatInReferenceTo && tokenLimit > 0 && (tokensComposer > 0 || (tokensHistory + tokensResponseMax) > 0) && (

@@ -23,11 +23,11 @@ const RenderMarkdownBox = styled(Box)({
 
 const DynamicMarkdownRenderer = React.lazy(() => import('./CustomMarkdownRenderer'));
 
-export function RenderMarkdown(props: { content: string; sx?: SxProps; }) {
+export function RenderMarkdown(props: { content: string; sx?: SxProps; direction?: 'ltr' | 'rtl'; }) {
   return (
     <RenderMarkdownBox
-      className='markdown-body' /* NODE: see GithubMarkdown.css for the dark/light switch, synced with Joy's */
-      sx={props.sx}
+      className='markdown-body'
+      sx={{ ...props.sx, ...(props.direction ? { direction: props.direction } : {}) }}
     >
       <React.Suspense fallback={<div>Loading...</div>}>
         <DynamicMarkdownRenderer content={props.content} />

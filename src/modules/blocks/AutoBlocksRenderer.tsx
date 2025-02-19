@@ -62,7 +62,8 @@ export function AutoBlocksRenderer(props: {
    * the search string with the replace string.
    */
   setText?: (newText: string) => void;
-
+  direction?: 'ltr' | 'rtl';
+  isRTL?: boolean;
 }) {
 
   // props-derived state
