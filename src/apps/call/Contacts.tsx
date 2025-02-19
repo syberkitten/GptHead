@@ -306,19 +306,7 @@ export function Contacts(props: { setCallIntent: (intent: AppCallIntent) => void
 
     {showSupport && <ListDivider sx={{ my: 1 }} />}
 
-    {showSupport && <GitHubProjectIssueCard
-      issue={354}
-      text='Call App: Support thread and compatibility matrix'
-      note={<>
-        Voice input uses the HTML Web Speech API, and speech output requires an ElevenLabs API Key.
-      </>}
-      // note2='Please report any issues you encounter'
-      sx={{
-        width: '100%',
-        mb: 2,
-        mt: 5,
-      }}
-    />}
+   
 
   </>;
 }

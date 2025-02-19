@@ -1,13 +1,13 @@
 # BIG-AGI 🧠✨
 
-Welcome to big-AGI, the AI suite for professionals that need function, form,
+Welcome to BotNexus Chat, the AI suite for professionals that need function, form,
 simplicity, and speed. Powered by the latest models from 15 vendors and
-open-source servers, `big-AGI` offers best-in-class Chats,
+open-source servers, `BotNexus Chat` offers best-in-class Chats,
 [Beams](https://github.com/enricoros/big-AGI/issues/470),
 and [Calls](https://github.com/enricoros/big-AGI/issues/354) with AI personas,
 visualizations, coding, drawing, side-by-side chatting, and more -- all wrapped in a polished UX.
 
-Stay ahead of the curve with big-AGI. 🚀 Pros & Devs love big-AGI. 🤖
+Stay ahead of the curve with BotNexus Chat. 🚀 Pros & Devs love BotNexus Chat. 🤖
 
 [![Official Website](https://img.shields.io/badge/BIG--AGI.com-%23096bde?style=for-the-badge&logo=vercel&label=launch)](https://big-agi.com)
 
@@ -223,7 +223,7 @@ to set up big-AGI quickly and easily.
 
 [![Installation Guide](https://img.shields.io/badge/Installation%20Guide-blue?style=for-the-badge&logo=read-the-docs&logoColor=white)](docs/installation.md)
 
-Or bring your API keys and jump straight into our free instance on [big-AGI.com](https://big-agi.com).
+Or bring your API keys and jump straight into our free instance on [BotNexus Chat](https://botnexus.chat).
 
 <br/>
 
