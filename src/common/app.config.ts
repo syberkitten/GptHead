@@ -15,20 +15,20 @@ export const Brand = {
     Description: 'Launch BotNexus Chat to unlock the full potential of AI, with precise control over your data and models. Voice interface, AI personas, advanced features, and fun UX.',
     SiteName: 'BotNexus Chat | Precision AI for You',
     ThemeColor: '#32383E',
-    TwitterSite: '@enricoros',
+    TwitterSite: '@syberkitten',
   },
   URIs: {
     Home: 'https://botnexus.chat',
     // App: 'https://get.big-agi.com',
     CardImage: 'https://botnexus.chat/icons/card-dark-1200.png',
-    OpenRepo: 'https://github.com/enricoros/BotNexusChat',
-    OpenProject: 'https://github.com/users/enricoros/projects/4',
-    SupportInvite: 'https://discord.gg/MkH4qj2Jp9',
+    OpenRepo: '',
+    OpenProject: '',
+    SupportInvite: 'https://discord.gg/PWTgg36x',
     // Twitter: 'https://www.twitter.com/enricoros',
     PrivacyPolicy: 'https://botnexus.chat/privacy',
     TermsOfService: 'https://botnexus.chat/terms',
   },
   Docs: {
-    Public: (docPage: string) => `https://botnexus.chat/docs/${docPage}`,
+    Public: (docPage: string) => `https://app.botnexus.ai/docs/${docPage}`,
   }
 } as const;

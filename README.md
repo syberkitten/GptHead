@@ -223,7 +223,7 @@ to set up big-AGI quickly and easily.
 
 [![Installation Guide](https://img.shields.io/badge/Installation%20Guide-blue?style=for-the-badge&logo=read-the-docs&logoColor=white)](docs/installation.md)
 
-Or bring your API keys and jump straight into our free instance on [BotNexus Chat](https://botnexus.chat).
+Or bring your API keys and jump straight into our free instance on [BotNexus Chat](https://gpthead.botnexus.ai).
 
 <br/>
 
