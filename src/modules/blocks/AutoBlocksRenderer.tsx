@@ -109,6 +109,8 @@ export function AutoBlocksRenderer(props: {
       // ref={ref /* this will assign the ref, now not needed anymore */}
       onContextMenu={props.onContextMenu}
       onDoubleClick={props.onDoubleClick}
+      dir={props.direction}
+      style={{direction: props.direction}}
     >
 
       {/* sequence of render components, for each Block */}

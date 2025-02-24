@@ -43,6 +43,8 @@ interface UIPreferencesStore {
 
   showPersonaFinder: boolean;
   setShowPersonaFinder: (showPersonaFinder: boolean) => void;
+  chatRtlEnabled: boolean;
+  setChatRtlEnabled: (chatRtlEnabled: boolean) => void;
 
   // UI Counters
 
@@ -91,6 +93,8 @@ export const useUIPreferencesStore = create<UIPreferencesStore>()(
       // Deprecated
       showPersonaFinder: false,
       setShowPersonaFinder: (showPersonaFinder: boolean) => set({ showPersonaFinder }),
+      chatRtlEnabled: false,
+      setChatRtlEnabled: (chatRtlEnabled: boolean) => set({ chatRtlEnabled }),
 
 
       // UI Counters

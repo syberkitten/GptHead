@@ -30,6 +30,7 @@ import TextureIcon from '@mui/icons-material/Texture';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import FormatTextdirectionRToLIcon from '@mui/icons-material/FormatTextdirectionRToL';
 
 import { ModelVendorAnthropic } from '~/modules/llms/vendors/anthropic/anthropic.vendor';
 
@@ -172,11 +173,13 @@ export function ChatMessage(props: {
   const [textContentEditState, setTextContentEditState] = React.useState<ChatMessageTextPartEditState | null>(null);
 
   // external state
-  const { adjContentScaling, disableMarkdown, doubleClickToEdit, uiComplexityMode } = useUIPreferencesStore(useShallow(state => ({
+  const { adjContentScaling, disableMarkdown, doubleClickToEdit, uiComplexityMode, chatRtlEnabled, setChatRtlEnabled } = useUIPreferencesStore(useShallow(state => ({
     adjContentScaling: adjustContentScaling(state.contentScaling, props.adjustContentScaling),
     disableMarkdown: state.disableMarkdown,
     doubleClickToEdit: state.doubleClickToEdit,
     uiComplexityMode: state.complexityMode,
+    chatRtlEnabled: state.chatRtlEnabled,
+    setChatRtlEnabled: state.setChatRtlEnabled,
   })));
   const labsEnhanceCodeBlocks = useUXLabsStore(state => state.labsEnhanceCodeBlocks);
   const [showDiff, setShowDiff] = useChatShowTextDiff();
@@ -316,6 +319,10 @@ export function ChatMessage(props: {
   const handleOpsToggleSkipMessage = React.useCallback(() => {
     onMessageToggleUserFlag?.(messageId, MESSAGE_FLAG_AIX_SKIP);
   }, [messageId, onMessageToggleUserFlag]);
+
+  const handleToggleRtl = React.useCallback(() => {
+    setChatRtlEnabled(!chatRtlEnabled);
+  }, [chatRtlEnabled, setChatRtlEnabled]);
 
   const handleOpsToggleStarred = React.useCallback(() => {
     onMessageToggleUserFlag?.(messageId, MESSAGE_FLAG_STARRED);
@@ -872,6 +879,10 @@ export function ChatMessage(props: {
               {isUserMessageSkipped ? 'Unskip' : 'Skip AI processing'}
             </MenuItem>
           )}
+          <MenuItem onClick={handleToggleRtl}>
+            <ListItemDecorator><FormatTextdirectionRToLIcon /></ListItemDecorator>
+            Toggle RTL
+          </MenuItem>
 
           {/* Delete / Branch / Truncate */}
           {!!props.onMessageBranch && <ListDivider />}

@@ -8,6 +8,7 @@ import type { DMessageFragmentId } from '~/common/stores/chat/chat.fragments';
 import type { DMessageRole } from '~/common/stores/chat/chat.message';
 import { GoodTooltip } from '~/common/components/GoodTooltip';
 import { InlineError } from '~/common/components/InlineError';
+import { useUIPreferencesStore } from '~/common/state/store-ui';
 
 import { explainServiceErrors } from '../explainServiceErrors';
 
@@ -53,7 +54,8 @@ export function BlockPartText_AutoBlocks(props: {
     return rtlRegex.test(text.trim());
   }
   
-  const computedDirection = props.direction || (isRTLText(props.textPartText) ? 'rtl' : 'ltr');
+  const { chatRtlEnabled } = useUIPreferencesStore();
+  const computedDirection = chatRtlEnabled ? 'rtl' : (props.direction || (isRTLText(props.textPartText) ? 'rtl' : 'ltr'));
   console.log('textPartText:', props.textPartText);
   console.log('isRTLText(props.textPartText):', isRTLText(props.textPartText));
   console.log('computedDirection:', computedDirection);
